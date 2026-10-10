@@ -1,62 +1,89 @@
 # Defensa de QTZ2
 
-Ejercicio 5 de CC2008: simulador de consola con herencia, polimorfismo y MVC.
+Proyecto del ejercicio 5 de CC2008, realizado en Java.
 
-## Requisitos y ejecución
+El programa simula una misión con diez módulos. Se usa desde un menú de texto y permite llevar el control de la energía, los datos recolectados y las descargas.
 
-Java 17 o posterior. No requiere bibliotecas externas. Desde esta carpeta:
+La misión avanza por ciclos. Cada ciclo es un turno en el que los módulos pueden realizar sus tareas.
+
+## Requisitos del programa
+
+- Tener instalado Java 17 o una versión posterior, con las herramientas para preparar y ejecutar el código (JDK).
+- Tener los archivos del proyecto en una misma carpeta.
+
+No hace falta instalar bibliotecas adicionales.
+
+## Cómo ejecutar el programa
+
+En Windows, puedes abrir `ejecutar.cmd` con doble clic.
+
+También puedes abrir PowerShell dentro de la carpeta del proyecto y ejecutar estos comandos en orden:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\compilar.ps1
 java '-Dfile.encoding=UTF-8' -cp bin qtz2.Main
 ```
 
-En Windows también se puede abrir `ejecutar.cmd` con doble clic. `bin` incluye los
-compilados de la entrega; `src` incluye todo el código. Ambos se versionan por
-solicitud del autor. Recompilar después de cualquier cambio en las fuentes.
+El primer comando prepara el código para que Java pueda ejecutarlo. El segundo inicia el programa.
 
-## Pruebas
+Si cambias el código de la carpeta `src`, vuelve a ejecutar ambos comandos para usar la versión actualizada.
+
+## Cómo ejecutar las pruebas
+
+El proyecto incluye comprobaciones para revisar el funcionamiento del programa. Después de preparar el código, ejecuta:
 
 ```powershell
 java '-Dfile.encoding=UTF-8' -cp bin qtz2.pruebas.Pruebas
 ```
 
-Las pruebas cubren el ejemplo oficial, recursos persistentes, inactividad,
-energía insuficiente, descarga parcial, orden de operación, consultas, empates,
-IDs únicos y conservación de datos durante 20 ciclos.
+Estas pruebas revisan:
 
-## Organización
+- El ejemplo proporcionado en el enunciado.
+- Que la energía y los datos se mantengan correctamente entre ciclos.
+- Qué ocurre cuando un módulo está inactivo o no tiene suficiente energía.
+- Las descargas que solo pueden completarse en parte.
+- El orden en que trabajan los módulos.
+- Las consultas y los empates en la cantidad de datos descargados.
+- Que cada módulo tenga un identificador diferente.
+- Que los datos se conserven correctamente durante 20 ciclos.
 
-- `src/qtz2/modelo`: módulos, misión y recursos compartidos.
-- `src/qtz2/vista`: entrada y salida por consola.
-- `src/qtz2/controlador`: coordinación del menú.
-- `src/qtz2/Main.java`: inicio y carga de diez módulos.
-- `src/qtz2/pruebas`: comprobaciones sin dependencias.
-- `bin`: clases Java compiladas con destino Java 17.
-- `output/pdf/analisis-diseno.pdf`: análisis y diagrama UML.
+## Cómo están organizados los archivos
 
-En NetBeans, crear un proyecto Java con fuentes existentes, seleccionar `src`
-como directorio de fuentes y `qtz2.Main` como clase principal. Los scripts
-permiten trabajar sin depender de una versión específica de NetBeans.
+| Carpeta o archivo | Para qué sirve |
+| --- | --- |
+| `src/qtz2/modelo` | Guarda la información de los módulos, la misión y los recursos que comparten. También contiene las reglas de funcionamiento. |
+| `src/qtz2/vista` | Muestra los mensajes y recibe lo que escribe el usuario. |
+| `src/qtz2/controlador` | Conecta las opciones del menú con las acciones del programa. |
+| `src/qtz2/Main.java` | Inicia el programa y carga los diez módulos. |
+| `src/qtz2/pruebas` | Contiene las comprobaciones del programa. |
+| `bin` | Contiene los archivos preparados para ejecutarse con Java 17 o posterior. |
+| `output/pdf/analisis-diseno.pdf` | Explica el diseño e incluye un diagrama de cómo se relacionan las partes del programa. |
 
-## Reglas y decisiones
+El proyecto practica cómo compartir características entre módulos y cómo hacer que cada tipo realice su propia tarea. También separa las reglas de la misión, los mensajes del menú y las acciones que elige el usuario.
 
-La misión comienza en el ciclo 10 con 20 unidades de energía, 80 MB en órbita y
-160 MB descargados. Los instrumentos han recolectado 240 MB históricamente.
-Los ciclos efectivos previos pueden diferir porque los módulos no siempre operan.
-La salud se almacena entre 0 y 100; no controla la actividad porque el enunciado
-no define ese efecto. Las capacidades son constantes y los históricos de vuelo
-y energía se calculan a partir de ciclos efectivos. No se incluyen baterías.
+Se incluyen tanto `src` como `bin` por decisión del autor.
 
-Cada módulo modifica los recursos antes de la operación del siguiente. El
-catálogo ordena una copia, conservando el orden inicial. La búsqueda combina ID
-exacto con nombre completo sin distinción de mayúsculas. Todos los empates en
-descargas se incluyen, incluso si los módulos están inactivos. El estado dura
-durante la ejecución; al reiniciar se recupera la carga inicial.
 
-## Entrega en GitHub
+## Datos al iniciar la misión
 
-Subir `src`, `bin`, `output`, este README y los scripts. No subir `tmp`.
-El repositorio remoto debe ser proporcionado o seleccionado por el autor.
-La rúbrica anuncia 55 puntos de implementación pero desglosa 45; consultar la
-diferencia al docente. Esto no altera los requisitos implementados.
+| Dato | Valor inicial |
+| --- | --- |
+| Ciclo actual | 10 |
+| Energía disponible | 20 unidades |
+| Datos en órbita | 80 MB |
+| Datos descargados | 160 MB |
+| Total recolectado por los instrumentos hasta ese momento | 240 MB |
+
+Los módulos pueden tener distintas cantidades de ciclos trabajados, porque no todos funcionan en cada ciclo.
+
+## Reglas del programa
+
+- **Los módulos trabajan en orden.** Cada uno cambia la energía o los datos disponibles antes de que trabaje el siguiente.
+- **La salud va de 0 a 100.** Este valor no decide si un módulo funciona, porque el enunciado no indica que deba hacerlo.
+- **Las capacidades no cambian.** Los valores acumulados de vuelo y energía se calculan según los ciclos en los que cada módulo realmente trabajó.
+- **No se incluyen baterías.**
+- **Ordenar el catálogo no cambia el orden de trabajo.** Solo se ordena una copia para mostrarla.
+- **La búsqueda usa el identificador exacto o el nombre completo.** Al buscar por nombre, da igual escribir en mayúsculas o minúsculas.
+- **Los empates en descargas muestran a todos los módulos empatados.** También se incluyen los que estén inactivos.
+- **Los cambios se conservan mientras el programa está abierto.** Al cerrarlo y volverlo a abrir, la misión comienza con los datos iniciales.
+
